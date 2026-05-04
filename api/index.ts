@@ -15,10 +15,20 @@ const GUITARIANS_BASE = 'https://www.guitarians.com';
 const GUITARIANS_SEARCH = 'https://zh-hans.guitarians.com/home/search';
 
 const HEADERS = {
-  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+  'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+  'Accept': 'application/json, text/plain, */*',
+  'Accept-Language': 'zh-TW,zh;q=0.9,en-US;q=0.8,en;q=0.7',
+  'Accept-Encoding': 'gzip, deflate, br',
   'Referer': `${GUITARIANS_BASE}/`,
   'Origin': GUITARIANS_BASE,
   'X-Requested-With': 'XMLHttpRequest',
+  'sec-ch-ua': '"Chromium";v="124", "Google Chrome";v="124", "Not-A.Brand";v="99"',
+  'sec-ch-ua-mobile': '?0',
+  'sec-ch-ua-platform': '"macOS"',
+  'Sec-Fetch-Dest': 'empty',
+  'Sec-Fetch-Mode': 'cors',
+  'Sec-Fetch-Site': 'same-origin',
+  'Connection': 'keep-alive',
 };
 
 interface ScoreResult {
@@ -98,6 +108,27 @@ function parseChordLine(chordStr: string, lyricStr: string): { chord: string; ly
   return { chord: formattedChord, lyric: lyricStr };
 }
 
+// Fetch a session cookie from the homepage to avoid 403s from datacenter IPs
+async function getSessionCookie(): Promise<string> {
+  try {
+    const res = await axios.get(GUITARIANS_BASE, {
+      headers: {
+        'User-Agent': HEADERS['User-Agent'],
+        'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+        'Accept-Language': HEADERS['Accept-Language'],
+      },
+      maxRedirects: 5,
+    });
+    const setCookie = res.headers['set-cookie'];
+    if (setCookie && setCookie.length > 0) {
+      return setCookie.map((c: string) => c.split(';')[0]).join('; ');
+    }
+  } catch {
+    // Proceed without cookie if homepage fetch fails
+  }
+  return '';
+}
+
 async function searchGuitarians(query: string): Promise<ScoreResult[]> {
   const traditional = converter(query);
   const searchQuery = traditional !== query ? traditional : query;
@@ -105,10 +136,17 @@ async function searchGuitarians(query: string): Promise<ScoreResult[]> {
   const params = new URLSearchParams();
   params.append('query', searchQuery);
 
+  const cookie = await getSessionCookie();
   const response = await axios.post(
     `${GUITARIANS_SEARCH}?query=${encodeURIComponent(searchQuery)}`,
     params,
-    { headers: { ...HEADERS, 'Content-Type': 'application/x-www-form-urlencoded' } }
+    {
+      headers: {
+        ...HEADERS,
+        'Content-Type': 'application/x-www-form-urlencoded',
+        ...(cookie ? { Cookie: cookie } : {}),
+      },
+    }
   );
 
   const data = response.data;
@@ -119,11 +157,13 @@ async function searchGuitarians(query: string): Promise<ScoreResult[]> {
 
 async function fetchChordData(webScoreUrl: string): Promise<{ score: GuitariansScore; sections: Section[] }> {
   const url = `${GUITARIANS_BASE}${webScoreUrl}`;
+  const cookie = await getSessionCookie();
   const response = await axios.post(url, {}, {
     headers: {
       ...HEADERS,
       'Content-Type': 'application/x-www-form-urlencoded',
-    }
+      ...(cookie ? { Cookie: cookie } : {}),
+    },
   });
   return response.data;
 }
