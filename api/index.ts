@@ -184,6 +184,44 @@ function processSections(sections: Section[]) {
   }).filter(Boolean);
 }
 
+// GET /api/health — checks server liveness and outbound connectivity to guitarians.com
+app.get('/api/health', async (req, res) => {
+  const start = Date.now();
+  let guitarianStatus: number | null = null;
+  let guitarianError: string | null = null;
+  let cookie: string | null = null;
+
+  try {
+    const result = await axios.get(GUITARIANS_BASE, {
+      headers: {
+        'User-Agent': HEADERS['User-Agent'],
+        'Accept': 'text/html',
+      },
+      maxRedirects: 5,
+      timeout: 8000,
+      validateStatus: () => true,
+    });
+    guitarianStatus = result.status;
+    const setCookie = result.headers['set-cookie'];
+    cookie = setCookie ? setCookie.map((c: string) => c.split(';')[0]).join('; ') : null;
+  } catch (err: any) {
+    guitarianError = err.message;
+  }
+
+  res.json({
+    status: 'ok',
+    region: process.env.VERCEL_REGION ?? process.env.AWS_REGION ?? 'unknown',
+    timestamp: new Date().toISOString(),
+    upstreamCheck: {
+      url: GUITARIANS_BASE,
+      httpStatus: guitarianStatus,
+      cookie: cookie ?? '(none)',
+      error: guitarianError,
+      latencyMs: Date.now() - start,
+    },
+  });
+});
+
 app.get('/api/search', async (req, res) => {
   const q = req.query.q as string;
   if (!q) {
