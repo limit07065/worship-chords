@@ -1,0 +1,564 @@
+:root {
+  --bg: #0f1117;
+  --surface: #1a1d27;
+  --surface2: #22263a;
+  --border: #2e3248;
+  --accent: #7c6af7;
+  --accent-hover: #9280ff;
+  --accent-dim: rgba(124, 106, 247, 0.15);
+  --text: #e8eaf6;
+  --text-muted: #8892a8;
+  --chord-color: #f4c542;
+  --lyric-color: #c8d0e7;
+  --label-color: #7c6af7;
+  --bar-color: #4a5277;
+  --success: #4caf50;
+  --error: #ef5350;
+  --radius: 10px;
+  --font-mono: 'Courier New', 'Noto Sans Mono CJK SC', monospace;
+  --font-ui: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-ui);
+  min-height: 100vh;
+  line-height: 1.5;
+}
+
+/* ─── Header ─────────────────────────────── */
+.app-header {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  background: rgba(15, 17, 23, 0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 24px;
+}
+
+.header-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 64px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  white-space: nowrap;
+}
+
+.logo-icon {
+  font-size: 22px;
+}
+
+.logo-text {
+  font-size: 17px;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), #a78bfa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+/* ─── Search Form ─────────────────────────── */
+.search-form {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+}
+
+.search-input-wrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.search-icon {
+  position: absolute;
+  left: 12px;
+  width: 16px;
+  height: 16px;
+  color: var(--text-muted);
+  pointer-events: none;
+}
+
+.search-input {
+  width: 100%;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--text);
+  font-size: 15px;
+  font-family: var(--font-ui);
+  padding: 10px 36px 10px 38px;
+  outline: none;
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+
+.search-input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-dim);
+}
+
+.search-input::placeholder {
+  color: var(--text-muted);
+}
+
+.clear-btn {
+  position: absolute;
+  right: 10px;
+  background: none;
+  border: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  transition: color 0.1s;
+}
+
+.clear-btn:hover {
+  color: var(--text);
+}
+
+.search-btn {
+  background: var(--accent);
+  border: none;
+  border-radius: var(--radius);
+  color: #fff;
+  cursor: pointer;
+  font-size: 14px;
+  font-weight: 600;
+  padding: 10px 22px;
+  transition: background 0.15s, transform 0.1s;
+  white-space: nowrap;
+  min-width: 72px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.search-btn:hover:not(:disabled) {
+  background: var(--accent-hover);
+}
+
+.search-btn:active:not(:disabled) {
+  transform: scale(0.97);
+}
+
+.search-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255,255,255,0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.7s linear infinite;
+  display: inline-block;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+/* ─── Main ────────────────────────────────── */
+.main {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 32px 24px 80px;
+}
+
+/* ─── Empty State ─────────────────────────── */
+.empty-state {
+  text-align: center;
+  padding: 80px 0;
+  color: var(--text-muted);
+}
+
+.empty-icon {
+  font-size: 64px;
+  opacity: 0.2;
+  margin-bottom: 16px;
+  font-family: serif;
+}
+
+.empty-state p {
+  font-size: 16px;
+  margin-bottom: 28px;
+}
+
+.examples {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+}
+
+.example-btn {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 20px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 13px;
+  padding: 7px 18px;
+  transition: all 0.15s;
+}
+
+.example-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+  background: var(--accent-dim);
+}
+
+/* ─── Loading ─────────────────────────────── */
+.loading-state {
+  text-align: center;
+  padding: 80px 0;
+  color: var(--text-muted);
+}
+
+.loading-bars {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-bottom: 20px;
+}
+
+.loading-bars span {
+  width: 4px;
+  height: 32px;
+  background: var(--accent);
+  border-radius: 2px;
+  animation: bars 1s ease-in-out infinite;
+}
+
+.loading-bars span:nth-child(2) { animation-delay: 0.1s; }
+.loading-bars span:nth-child(3) { animation-delay: 0.2s; }
+.loading-bars span:nth-child(4) { animation-delay: 0.3s; }
+
+@keyframes bars {
+  0%, 100% { transform: scaleY(0.4); opacity: 0.4; }
+  50% { transform: scaleY(1); opacity: 1; }
+}
+
+/* ─── Error ───────────────────────────────── */
+.error-state {
+  text-align: center;
+  padding: 60px 0;
+  color: var(--error);
+}
+
+.error-icon {
+  font-size: 32px;
+  display: block;
+  margin-bottom: 12px;
+}
+
+.retry-btn {
+  margin-top: 16px;
+  background: var(--surface);
+  border: 1px solid var(--error);
+  border-radius: var(--radius);
+  color: var(--error);
+  cursor: pointer;
+  font-size: 14px;
+  padding: 8px 20px;
+  transition: background 0.15s;
+}
+
+.retry-btn:hover {
+  background: rgba(239, 83, 80, 0.1);
+}
+
+/* ─── Song View ───────────────────────────── */
+.song-view {
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── Song Meta ───────────────────────────── */
+.song-meta {
+  margin-bottom: 20px;
+}
+
+.song-title {
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 10px;
+  line-height: 1.3;
+}
+
+.song-details {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  align-items: center;
+}
+
+.meta-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  font-size: 13px;
+  padding: 4px 10px;
+  color: var(--text-muted);
+}
+
+.meta-badge.key {
+  border-color: var(--accent);
+  color: var(--accent);
+  background: var(--accent-dim);
+}
+
+.meta-badge.key strong {
+  font-size: 15px;
+}
+
+.meta-badge.capo {
+  border-color: #f4c542;
+  color: #f4c542;
+  background: rgba(244, 197, 66, 0.1);
+}
+
+.original-key {
+  font-size: 11px;
+  opacity: 0.7;
+  margin-left: 2px;
+}
+
+/* ─── Controls ────────────────────────────── */
+.controls-bar {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  margin-bottom: 16px;
+  flex-wrap: wrap;
+}
+
+.control-group {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.control-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.ctrl-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 700;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: background 0.1s;
+  line-height: 1;
+}
+
+.ctrl-btn:hover {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+
+.ctrl-value {
+  font-size: 14px;
+  font-weight: 600;
+  min-width: 36px;
+  text-align: center;
+  color: var(--text);
+}
+
+.ctrl-reset {
+  background: none;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 11px;
+  padding: 3px 8px;
+  transition: all 0.15s;
+}
+
+.ctrl-reset:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.source-link {
+  margin-left: auto;
+  font-size: 12px;
+  color: var(--text-muted);
+  text-decoration: none;
+  transition: color 0.15s;
+}
+
+.source-link:hover {
+  color: var(--accent);
+}
+
+/* ─── Version Picker ──────────────────────── */
+.version-picker {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 20px;
+  padding: 10px 14px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.version-label {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+.version-btn {
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-size: 12px;
+  padding: 4px 12px;
+  transition: all 0.15s;
+}
+
+.version-btn:hover {
+  border-color: var(--accent);
+  color: var(--text);
+}
+
+.version-btn.active {
+  background: var(--accent-dim);
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ─── Chord Chart ─────────────────────────── */
+.chord-chart {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 28px 32px;
+  font-family: var(--font-mono);
+  overflow-x: auto;
+}
+
+.section-label {
+  font-family: var(--font-ui);
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: var(--label-color);
+  margin: 24px 0 10px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid var(--border);
+}
+
+.section-label:first-child {
+  margin-top: 0;
+}
+
+.chord-line {
+  margin-bottom: 2px;
+  line-height: 1.2;
+}
+
+.chord-row {
+  color: var(--chord-color);
+  white-space: pre;
+  font-weight: 700;
+  min-height: 1.2em;
+  letter-spacing: 0.02em;
+}
+
+.lyric-row {
+  color: var(--lyric-color);
+  white-space: pre;
+  margin-bottom: 4px;
+  letter-spacing: 0.05em;
+}
+
+.bar-line {
+  margin-bottom: 6px;
+}
+
+.bar-chord {
+  color: var(--chord-color);
+}
+
+.spacer-line {
+  height: 12px;
+}
+
+/* ─── Responsive ──────────────────────────── */
+@media (max-width: 600px) {
+  .header-inner {
+    flex-direction: column;
+    height: auto;
+    padding: 12px 0;
+    gap: 12px;
+  }
+
+  .logo-text {
+    display: none;
+  }
+
+  .chord-chart {
+    padding: 16px;
+  }
+
+  .controls-bar {
+    gap: 12px;
+  }
+
+  .source-link {
+    margin-left: 0;
+  }
+}
